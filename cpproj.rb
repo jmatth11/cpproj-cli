@@ -6,13 +6,21 @@ Be able to add fields when creating class files which will also create getters a
 
 =end
 
+# array for libraries added (future ability)
 $libs = Array.new
+# array for cpp files in project
 $files = Array.new
+# array for object files in project
 $obj_files = Array.new
+# project name
 $proj_name = ""
+# standard of C++ used
 $std_cpp = "-std=c++11"
+# compiler used
 $comp = "clang++"
 
+# function to handle the initial arguments passed
+# @param arg
 def initial_argument arg
 	case arg
 	when "init"
@@ -40,6 +48,7 @@ def initial_argument arg
 	end
 end
 
+# Function that displays the help menu
 def show_help
 
 	puts "-------------------------------"
@@ -47,7 +56,7 @@ def show_help
 	puts "Usage: ruby cpproj.rb [command] [argument]"
 	puts ""
 	puts "commands:"
-	puts "	init		initialize a cpp project. Argument passed: name of project."
+	puts "	init		Argument passed: name of porject. Initialize a cpp project."
 	puts "			Creates project, build, and src folders. Inside project "
 	puts "			folder a Makefile. Inside src folder a Main.cpp file."
 	puts ""
@@ -55,13 +64,20 @@ def show_help
 	puts "			with defualt constructor and destructor setup for you. Adds"
 	puts "			file to Makefile as well."
 	puts ""
-	puts "	build		"
+	puts "	build		No argument. Command will compile project and place object "
+	puts "			files and executable in build directory. This command cleans"
+	puts "			the build directory each time ran, to clear out previous "
+	puts "			contents."
+	puts ""
+	puts "	run		Same as build but will also run your executable."
 	puts ""
 	puts "	help		Shows this menu."
 	puts ""
 	puts "-------------------------------"
 end
 
+# Function that creates the initial project setup
+# @param name
 def create_project name
 	puts "creating project..."
 	if !File.directory?("./"+name) then
@@ -81,6 +97,8 @@ def create_project name
 	end
 end
 
+# Function that is used for creating and updating the Makefile for project
+# @param name
 def create_makefile name
 str = "CC=clang++
 CFLAGS=-Wall -c
@@ -126,7 +144,9 @@ else
 end
 end
 
-
+# Function that takes care of creating new classes for project.
+# Will update Makefile also when ran
+# @param name
 def create_class name
 
 	if File.exist?("Makefile") && File.directory?("./src") then
@@ -149,6 +169,7 @@ def create_class name
 
 end
 
+# Function to grab the current TARGET name and OBJECTS and COBJS from Makefile
 def get_objects_from_make
 	open("Makefile").each_line do |line|
 		$proj_name = line[/TARGET=(.+)/,1] if line =~ /TARGET=.+/
@@ -164,6 +185,7 @@ def get_objects_from_make
 	end
 end
 
+# Function to handle running the project or to build and run the project
 def run_project
 	if File.exist?("Makefile") && File.directory?("./build") then
 		open("Makefile").each_line do |line|
@@ -183,6 +205,8 @@ def run_project
 	end
 end
 
+# Function to setup generic hpp file.
+# @param name
 def hpp_setup name
 
 return "#ifndef #{name.upcase}_HPP
@@ -200,6 +224,8 @@ public:
 "
 end
 
+# Function to setup generic cpp file.
+# @param name
 def cpp_setup name
 return "#include \"#{name}.hpp\"
 
@@ -213,6 +239,7 @@ return "#include \"#{name}.hpp\"
 "
 end
 
+# make sure arguments or passed or show help if none.
 if ARGV.count > 0 then
 	initial_argument ARGV[0]
 else

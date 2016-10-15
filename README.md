@@ -1,5 +1,5 @@
 # cpproj-cli
-A small c++ cli tool for project management.
+A small cli tool for C++ project management.
 
 # Current Abilities
 
